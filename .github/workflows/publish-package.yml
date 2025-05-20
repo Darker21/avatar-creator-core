@@ -20,6 +20,7 @@ jobs:
           run_id: ${{ github.event.inputs.artifact_run_id }}
           name: python-dist
           path: dist/
+          github_token: ${{ secrets.ACTION_API_KEY }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
