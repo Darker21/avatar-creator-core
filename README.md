@@ -45,6 +45,66 @@ avatar = core.merge_images(face_img, hair_img)
 avatar.save("output.png")
 ```
 
+## Usage
+
+Example script ([cli/main.py](cli/main.py)):
+
+```python
+import src.avatar_creator.core as core
+
+# Load images
+face_img = core.load_rgba_image("content/face", "face_1.png")
+hair_img = core.load_rgba_image("content/hair", "mid-length.png")
+
+# Recolor hair to orange
+hair_img = core.recolor_to_rgb(hair_img, (255, 144, 25))
+
+# Composite hair over face
+avatar = core.merge_images(face_img, hair_img)
+
+# Save result
+avatar.save("output.png")
+```
+
+### Example: Creating a blue-haired avatar
+
+```python
+import src.avatar_creator.core as core
+
+face_img = core.load_rgba_image("content/face", "face_2.png")
+hair_img = core.load_rgba_image("content/hair", "short.png")
+hair_img = core.recolor_to_rgb(hair_img, (50, 100, 255))  # Blue
+avatar = core.merge_images(face_img, hair_img)
+avatar.save("avatar-blue.png")
+```
+
+### Example: Batch generate avatars with different hair colors
+
+```python
+import src.avatar_creator.core as core
+
+colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Red, Green, Blue
+face_img = core.load_rgba_image("content/face", "face_1.png")
+hair_img = core.load_rgba_image("content/hair", "mid-length.png")
+
+for color in colors:
+    recolored = core.recolor_to_rgb(hair_img, color)
+    avatar = core.merge_images(face_img, recolored)
+    avatar.save(f"avatar-{color[0]}-{color[1]}-{color[2]}.png")
+```
+
+---
+
+## Example Images
+
+| Face Example                | Hair Example                | Resulting Avatar Example         |
+|----------------------------|-----------------------------|----------------------------------|
+| ![face_1.png](docs/example/face.png) | ![mid-length.png](docs/example/hair.png) | ![output.png](docs/example/output.png)        |
+
+If running the [`cli/main.py`]("/cli/main.py") Place your face and hair images in the `cli/content/face/` and `cli/content/hair/` folders, respectively.
+
+---
+
 ## API
 
 ### [`avatar_creator.core.recolor_to_rgb`](src/avatar_creator/core.py)
