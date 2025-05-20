@@ -1,0 +1,79 @@
+name: Python package
+
+on:
+  push:
+    branches: [develop, feature/*]
+  pull_request:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set version with branch and datetime
+        id: set_version
+        run: |
+            VERSION=$(python setup.py --version)
+            BRANCH_NAME=${GITHUB_REF##*/}
+            if [ "$BRANCH_NAME" != "develop" ]; then
+                # Remove any leading 'feature/' from the branch name
+                BRANCH_NAME=${BRANCH_NAME#feature/}
+                DATE_STR=$(date +'%Y%m%d%H%M%S')
+                VERSION="${VERSION}-${BRANCH_NAME}-${DATE_STR}"
+            fi
+            echo "VERSION=$VERSION" >> $GITHUB_ENV
+            echo "Package version: $VERSION"
+
+
+      - name: Update version in setup.cfg
+        run: |
+          sed -i "s/^version = .*/version = $VERSION/" setup.cfg
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Install test dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests with coverage (HTML report)
+        run: |
+          pytest --cov=. --cov-report=html --cov-report=term
+
+      - name: Upload HTML coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html-report
+          path: htmlcov/
+
+      - name: Build package
+        run: |
+          python -m build
+    
+      - name: Upload built package as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: dist/
+    
+      - name: Publish package
+        if: github.ref == 'refs/heads/develop'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          pip install twine
+          twine upload dist/*
