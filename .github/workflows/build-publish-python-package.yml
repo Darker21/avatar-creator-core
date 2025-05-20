@@ -45,7 +45,8 @@ jobs:
           if [ "$BRANCH_NAME" != "develop" ]; then
               BRANCH_NAME=${BRANCH_NAME#feature/}
               DATE_STR=$(date +'%Y%m%d%H%M%S')
-              VERSION="${VERSION}-${BRANCH_NAME}-${DATE_STR}"
+              # Use PEP 440 local version segment
+              VERSION="${VERSION}+${BRANCH_NAME}.${DATE_STR}"
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Package version: $VERSION"
