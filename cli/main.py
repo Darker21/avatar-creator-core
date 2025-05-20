@@ -19,7 +19,7 @@ Directory Structure:
 """
 
 import os
-import src.avatar_creator.core as core
+import avatar_creator.core as core
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 HAIR_DIR = os.path.join(BASE_DIR, "content", "hair")
