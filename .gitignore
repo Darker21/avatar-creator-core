@@ -140,4 +140,4 @@ cython_debug/
 .vscode/
 
 # example
-dev/output.png
+cli/output.png
