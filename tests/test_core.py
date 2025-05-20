@@ -1,6 +1,5 @@
 from PIL import Image
 import pytest
-import test
 from avatar_creator.core import recolor_to_rgb, load_rgba_image, merge_images
 
 def create_test_image(color=(255, 255, 255, 255), size=(4, 4)):
