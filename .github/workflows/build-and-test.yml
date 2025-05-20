@@ -53,7 +53,7 @@ jobs:
           echo "Package version: $VERSION"
 
       - name: Set beta version
-        if: startsWith(github.ref, 'refs/heads/feature/')
+        if: startsWith(github.ref_name, 'feature/')
         id: set_beta_version
         run: |
           PACKAGE_NAME="avatar-creator-core"
