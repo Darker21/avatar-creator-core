@@ -1,7 +1,3 @@
-#!/usr/bin/env bash
-
-PACKAGE_NAME="avatar-creator-core"
-NEXT_BETA=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json | python3 -c "
 import sys, json, re
 json_data = json.load(sys.stdin)
 releases = json_data['releases']
@@ -21,8 +17,3 @@ if beta_versions:
     print(f'{next_version}-beta.{latest_beta + 1}')
 else:
     print(f'{next_version}-beta.1')
-")
-
-VERSION=$NEXT_BETA
-
-echo "Package version: $VERSION"
