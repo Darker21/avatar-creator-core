@@ -58,7 +58,7 @@ def main():
     face_file = face_files[face_choice]
 
     # Load and recolor hair image
-    hair_img = core.load_rgba_image(HAIR_DIR, hair_file)
+    hair_img = core.load_rgba_image(os.path.join(HAIR_DIR, hair_file))
 
     # Ask user for hair color as R,G,B input or hex code
     hair_color_input = input("Enter hair color as R,G,B (e.g. 255,144,25) or hex (e.g. #FF9019): ").strip()
@@ -73,7 +73,7 @@ def main():
     hair_img = core.recolor_to_rgb(hair_img, hair_color)
 
     # Load face image
-    face_img = core.load_rgba_image(FACE_DIR, face_file)
+    face_img = core.load_rgba_image(os.path.join(FACE_DIR, face_file))
 
     # Composite hair over face (both must be same size)
     combined = core.merge_images(face_img, hair_img)

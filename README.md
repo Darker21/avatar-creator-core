@@ -26,35 +26,18 @@ pip install .
 
 ## Usage
 
-Example script ([dev/main.py](dev/main.py)):
-
-```python
-import src.avatar_creator.core as core
-
-# Load images
-face_img = core.load_rgba_image("content/face", "face_1.png")
-hair_img = core.load_rgba_image("content/hair", "mid-length.png")
-
-# Recolor hair to orange
-hair_img = core.recolor_to_rgb(hair_img, (255, 144, 25))
-
-# Composite hair over face
-avatar = core.merge_images(face_img, hair_img)
-
-# Save result
-avatar.save("output.png")
-```
-
-## Usage
-
 Example script ([cli/main.py](cli/main.py)):
 
 ```python
-import src.avatar_creator.core as core
+import os
+import avatar_creator.core as core
+
+hair_file = os.path.join("content/hair", "mid-length.png")
+face_file = os.path.join("content/face", "face_1.png")
 
 # Load images
-face_img = core.load_rgba_image("content/face", "face_1.png")
-hair_img = core.load_rgba_image("content/hair", "mid-length.png")
+face_img = core.load_rgba_image(face_file)
+hair_img = core.load_rgba_image(hair_file)
 
 # Recolor hair to orange
 hair_img = core.recolor_to_rgb(hair_img, (255, 144, 25))
@@ -69,10 +52,15 @@ avatar.save("output.png")
 ### Example: Creating a blue-haired avatar
 
 ```python
-import src.avatar_creator.core as core
+import os
+import avatar_creator.core as core
 
-face_img = core.load_rgba_image("content/face", "face_2.png")
-hair_img = core.load_rgba_image("content/hair", "short.png")
+face_img = core.load_rgba_image(
+    os.path.join("content/face", "face_2.png")
+)
+hair_img = core.load_rgba_image(
+    os.path.join("content/hair", "short.png")
+)
 hair_img = core.recolor_to_rgb(hair_img, (50, 100, 255))  # Blue
 avatar = core.merge_images(face_img, hair_img)
 avatar.save("avatar-blue.png")
@@ -81,11 +69,16 @@ avatar.save("avatar-blue.png")
 ### Example: Batch generate avatars with different hair colors
 
 ```python
-import src.avatar_creator.core as core
+import os
+import avatar_creator.core as core
 
 colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # Red, Green, Blue
-face_img = core.load_rgba_image("content/face", "face_1.png")
-hair_img = core.load_rgba_image("content/hair", "mid-length.png")
+face_img = core.load_rgba_image(
+    os.path.join("content/face", "face_1.png")
+)
+hair_img = core.load_rgba_image(
+    os.path.join("content/hair", "mid-length.png")
+)
 
 for color in colors:
     recolored = core.recolor_to_rgb(hair_img, color)
@@ -117,7 +110,7 @@ Recolors an RGBA image to the target RGB color, preserving the original brightne
 ### [`avatar_creator.core.load_rgba_image`](src/avatar_creator/core.py)
 
 ```python
-load_rgba_image(dir_path: str, filename: str) -> Image.Image
+load_rgba_image(file_path_: str) -> Image.Image
 ```
 Loads an image from a directory and converts it to RGBA.
 

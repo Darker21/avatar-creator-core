@@ -1,5 +1,6 @@
 from PIL import Image
 import pytest
+import test
 from avatar_creator.core import recolor_to_rgb, load_rgba_image, merge_images
 
 def create_test_image(color=(255, 255, 255, 255), size=(4, 4)):
@@ -31,7 +32,7 @@ def test_load_rgba_image_loads_and_converts(tmp_path):
     test_dir = tmp_path
     test_file = test_dir / "test.png"
     img.save(test_file)
-    loaded = load_rgba_image(str(test_dir), "test.png")
+    loaded = load_rgba_image(test_file)
     assert loaded.mode == "RGBA"
     assert loaded.size == img.size
     assert list(loaded.getdata())[0] == (10, 20, 30, 40)
