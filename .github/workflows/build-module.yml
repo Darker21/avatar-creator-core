@@ -32,16 +32,23 @@ jobs:
       - name: Set version with branch and datetime
         id: set_version
         run: |
-            VERSION=$(python setup.py --version)
-            BRANCH_NAME=${GITHUB_REF##*/}
-            if [ "$BRANCH_NAME" != "develop" ]; then
-                # Remove any leading 'feature/' from the branch name
-                BRANCH_NAME=${BRANCH_NAME#feature/}
-                DATE_STR=$(date +'%Y%m%d%H%M%S')
-                VERSION="${VERSION}-${BRANCH_NAME}-${DATE_STR}"
-            fi
-            echo "VERSION=$VERSION" >> $GITHUB_ENV
-            echo "Package version: $VERSION"
+          PACKAGE_NAME="avatar-creator-core"
+          # Try to fetch latest version from PyPI (returns JSON)
+          LATEST_VERSION=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json | python3 -c "import sys, json; print(json.load(sys.stdin)['info'].get('version', ''))" || true)
+          # If LATEST_VERSION is empty or contains 'ModuleNotFoundError', set default
+          if [ -z "$LATEST_VERSION" ] || [[ "$LATEST_VERSION" == *"ModuleNotFoundError"* ]]; then
+            VERSION="1.0.0"
+          else
+            VERSION=$LATEST_VERSION
+          fi
+          BRANCH_NAME=${GITHUB_REF##*/}
+          if [ "$BRANCH_NAME" != "develop" ]; then
+              BRANCH_NAME=${BRANCH_NAME#feature/}
+              DATE_STR=$(date +'%Y%m%d%H%M%S')
+              VERSION="${VERSION}-${BRANCH_NAME}-${DATE_STR}"
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Package version: $VERSION"
 
       - name: Update version in setup.cfg
         run: |
