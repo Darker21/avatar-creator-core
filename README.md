@@ -1,5 +1,7 @@
 # Avatar Creator Core
 
+[![Build and Test Python Package](https://github.com/Darker21/avatar-creator-core/actions/workflows/build-and-test.yml/badge.svg?branch=develop)](https://github.com/Darker21/avatar-creator-core/actions/workflows/build-and-test.yml)
+
 A Python library for recoloring white-hair assets and compositing avatar images using Pillow.
 
 ## Features
