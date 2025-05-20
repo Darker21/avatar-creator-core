@@ -2,20 +2,22 @@
 name: Publish Python Package
 
 on:
-  workflow_run:
-    workflows: ["Build and Test Python Package"]
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: 'Workflow run ID to download artifact from'
+        required: true
 
 jobs:
   publish:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'develop' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download built package artifact
-        uses: actions/download-artifact@v4
+      - name: Download built package artifact from workflow run
+        uses: dawidd6/action-download-artifact@v3
         with:
+          workflow: build-and-test.yml
+          run_id: ${{ github.event.inputs.artifact_run_id }}
           name: python-dist
           path: dist/
 
