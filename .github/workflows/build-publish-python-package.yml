@@ -1,4 +1,4 @@
-name: Python package
+name: Build and Publish Python Package
 
 on:
   push:
@@ -64,6 +64,10 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
+      - name: Install package in editable mode
+        run: |
+          pip install -e .
+
       - name: Run tests with coverage (HTML report)
         run: |
           pytest --cov=. --cov-report=html --cov-report=term
@@ -77,13 +81,13 @@ jobs:
       - name: Build package
         run: |
           python -m build
-    
+
       - name: Upload built package as artifact
         uses: actions/upload-artifact@v4
         with:
           name: python-dist
           path: dist/
-    
+
       - name: Publish package
         if: github.ref == 'refs/heads/develop'
         env:
