@@ -79,8 +79,8 @@ jobs:
               print(f'{next_version}-beta.1')
           ")
 
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Package version: $VERSION"
+          echo "VERSION=$NEXT_BETA" >> $GITHUB_ENV
+          echo "Package version: $NEXT_BETA"
 
       - name: Update version in setup.cfg
         run: |
