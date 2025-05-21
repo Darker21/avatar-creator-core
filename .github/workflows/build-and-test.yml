@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [develop]
   workflow_dispatch:
+    inputs:
+      package_version:
+        description: 'Package version to set'
+        required: true
 
 jobs:
   build-test:
@@ -29,7 +33,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Set version with branch and datetime
+      - name: Set version
+        if: github.ref == 'refs/heads/develop'
         id: set_version
         run: |
           PACKAGE_NAME="avatar-creator-core"
@@ -39,17 +44,49 @@ jobs:
           else
             VERSION=$LATEST_VERSION
           fi
-          BRANCH_NAME=${GITHUB_REF##*/}
-          if [ "$BRANCH_NAME" != "develop" ]; then
-              BRANCH_NAME=${BRANCH_NAME#feature/}
-              DATE_STR=$(date +'%Y%m%d%H%M%S')
-              VERSION="${VERSION}+${BRANCH_NAME}.${DATE_STR}"
-          fi
+          
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          PATCH=$((PATCH + 1))
+          VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Package version: $VERSION"
 
+      - name: Set beta version
+        if: startsWith(github.ref_name, 'feature/')
+        id: set_beta_version
+        run: |
+          PACKAGE_NAME="avatar-creator-core"
+          NEXT_BETA=$(curl -s https://pypi.org/pypi/$PACKAGE_NAME/json | python3 -c "
+          import sys, json, re
+          json_data = json.load(sys.stdin)
+          releases = json_data['releases']
+          info = json_data['info']
+
+          latest_version = info.get('version')
+          if not latest_version:
+              latest_version = '1.0.0'
+          major, minor, patch = latest_version.split('.')
+          patch = int(patch) + 1
+          next_version = f'{major}.{minor}.{patch}'
+
+          beta_versions = [v for v in releases.keys() if 'beta' in v]
+          if beta_versions:
+              nums = [int(re.search(r'beta-?(\d+)', v).group(1)) for v in beta_versions if re.search(r'beta-?(\d+)', v)]
+              latest_beta = max(nums)
+              print(f'{next_version}-beta.{latest_beta + 1}')
+          else:
+              print(f'{next_version}-beta.1')
+          ")
+
+          echo "VERSION=$NEXT_BETA" >> $GITHUB_ENV
+          echo "Package version: $NEXT_BETA"
+
       - name: Update version in setup.cfg
         run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.package_version }}"
+          fi
           sed -i "s/^version = .*/version = $VERSION/" setup.cfg
 
       - name: Install build dependencies
