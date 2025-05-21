@@ -1,4 +1,7 @@
-import sys, json, re
+import sys
+import json
+import re
+
 json_data = json.load(sys.stdin)
 releases = json_data['releases']
 info = json_data['info']
