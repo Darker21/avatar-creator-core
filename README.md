@@ -15,13 +15,7 @@ A Python library for recoloring white-hair assets and compositing avatar images 
 ## Installation
 
 ```sh
-pip install pillow
-```
-
-Or install from source:
-
-```sh
-pip install .
+pip install avatar-creator-core==1.0.0
 ```
 
 ## Usage

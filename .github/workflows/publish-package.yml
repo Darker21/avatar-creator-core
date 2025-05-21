@@ -35,3 +35,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install twine
           twine upload dist/*
+
+      - name: Generate checksums for dist files
+        run: |
+          for file in dist/*; do
+            sha256sum "$file" > "dist/$(basename "$file").sha256"
+          done
+
+      - name: Create GitHub Release Draft
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
