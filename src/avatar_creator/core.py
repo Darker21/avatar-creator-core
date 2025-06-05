@@ -43,14 +43,18 @@ def recolor_to_rgb(
 
 
 def load_rgba_image(file_path: str) -> Image.Image:
-    """
-    Load an image from the given file_path and convert it to RGBA mode.
+    """Load an image from ``file_path`` and return it in RGBA mode.
+
+    The previous implementation opened the file directly and returned the
+    converted image. This left the file handle open which could lead to
+    resource warnings on some platforms. Opening the file using a context
+    manager ensures the file handle is closed immediately after loading.
 
     Args:
         file_path (str): The path to the image file to load.
 
     Returns:
-        Image.Image: The loaded image in RGBA mode.
+        Image.Image: The loaded image converted to RGBA mode.
 
     Example:
         ```python
@@ -58,7 +62,8 @@ def load_rgba_image(file_path: str) -> Image.Image:
         img.show()
         ```
     """
-    return Image.open(file_path).convert("RGBA")
+    with Image.open(file_path) as img:
+        return img.convert("RGBA")
 
 def merge_images(
     base_img: Image.Image,

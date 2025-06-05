@@ -36,6 +36,15 @@ def test_load_rgba_image_loads_and_converts(tmp_path):
     assert loaded.size == img.size
     assert list(loaded.getdata())[0] == (10, 20, 30, 40)
 
+def test_load_rgba_image_closes_file(tmp_path):
+    img = create_test_image((1, 2, 3, 4))
+    file_path = tmp_path / "tmp.png"
+    img.save(file_path)
+    _ = load_rgba_image(file_path)
+    # Deleting the file should not raise an exception if the handle is closed
+    file_path.unlink()
+    assert not file_path.exists()
+
 def test_merge_images_merges_two_images():
     base = create_test_image((255, 0, 0, 255))
     overlay = create_test_image((0, 255, 0, 128))
