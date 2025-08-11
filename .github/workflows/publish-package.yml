@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Download built package artifact from workflow run
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v11
         with:
           workflow: build-and-test.yml
           run_id: ${{ github.event.inputs.artifact_run_id }}
