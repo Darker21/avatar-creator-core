@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Download built package artifact from workflow run
-        uses: dawidd6/action-download-artifact@v19
+        uses: dawidd6/action-download-artifact@v20
         with:
           workflow: build-and-test.yml
           run_id: ${{ github.event.inputs.artifact_run_id }}
@@ -43,7 +43,7 @@ jobs:
           done
 
       - name: Create GitHub Release Draft
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           draft: true
           files: dist/*
